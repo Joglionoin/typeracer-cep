@@ -4,22 +4,21 @@ function preload() {
 }
 
 function setup() {
-  typed = ''
-  time = 0
-  started = false
-  final = 0
-
+  reset()
   createCanvas(windowWidth, windowHeight);
   generateWords()
-
-  // this is to calculate if length of sentence is even
-  // it will be useful when aligning the typed sentence
-  even_sentence = sentence.length % 2 == 0
-
 }
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight)
+}
+
+function reset() {
+  typed = ''
+  time = 0
+  started = false
+  final = 0
+  restart_hover = 50
 }
 
 function draw() {
@@ -36,7 +35,7 @@ function draw() {
     text("click anywhere to play again", width/2, height * 2/3)
 
     if (mouseIsPressed) {
-      final = 0
+      reset()
       generateWords()
     }
 
@@ -50,6 +49,24 @@ function draw() {
     textSize(width / 25)
     textAlign(CENTER)
     text((time/1000).toFixed(2), width/2, height * 4/5)
+
+    strokeWeight(0)
+    fill(restart_hover)
+    rect(width * 2/3, height * 4/5 - height/15, width/10, height/15)
+    fill(255)
+    textSize(width/50)
+    text("restart", width * 2/3 + width/20, height * 4/5 - width/100)
+
+    if (mouseX > width * 2/3 && mouseX < width * 2/3 + width/10 && mouseY > height * 4/5 - height/10 && mouseY < height * 4/5) {
+      restart_hover = 60
+      if (mouseIsPressed && mouseButton == LEFT) {
+        reset()
+        generateWords()
+      }
+    }
+    else {
+      restart_hover = 50
+    }
 
     textSize(width / 75)
 
@@ -90,15 +107,20 @@ function draw() {
 }
 
 function generateWords() {
+  textSize(width / 75)
   sentence = ''
   for (i=0; i<10; i++) {
     sentence += words[Math.floor(Math.random() * words.length)]
     sentence += ' '
   }
-
+  
   if (textWidth(sentence) >= width) {
     generateWords()
   }
+
+  // this is to calculate if length of sentence is even
+  // it will be useful when aligning the typed sentence
+  even_sentence = sentence.length % 2 == 0
 }
 
 function keyTyped() {
