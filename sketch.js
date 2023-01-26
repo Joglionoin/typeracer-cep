@@ -7,6 +7,10 @@ function setup() {
   reset()
   createCanvas(windowWidth, windowHeight);
   generateWords()
+
+  results = []
+  prev_result = 0
+
 }
 
 function windowResized() {
@@ -19,22 +23,55 @@ function reset() {
   started = false
   final = 0
   restart_hover = 50
+  
 }
 
 function draw() {
   background(50);
 
   textFont("Roboto Mono")
-
+  
+  // result
   if (final >= sentence.length-1) {
-    textSize(width/20)
+    textSize(width/30)
     textAlign(CENTER)
-    text("WPM: " + Math.round((sentence.length / 5) / (time/1000/60)), width/2, height/2)
-    
-    textSize(width/40)
-    text("click anywhere to play again", width/2, height * 2/3)
+    text("WPM: " + Math.round((sentence.length / 5) / (time/1000/60)), width/2, height / 5)
 
-    if (mouseIsPressed) {
+    if (prev_result == 0) {
+      text("New record!", width/2, height / 5 + 50)
+    }
+    else if (Math.round((sentence.length / 5) / (time/1000/60)) > Math.max(results)) {
+      text("New record!", width/2, height / 5 + 50)
+
+      text(Math.round(
+        ((((sentence.length / 5) / (time/1000/60)) - Math.max(results)) / Math.max(results)) * 100) + '% better than the previous best attempt', width/2, height / 5 + 100)
+    }
+    else if (Math.round((sentence.length / 5) / (time/1000/60)) >= prev_result) {
+      text(Math.round(
+        ((sentence.length / 5) / (time/1000/60) - prev_result) / prev_result * 100) + '% better than the previous attempt', width/2, height/5 + 100)
+    }
+    else {
+      text(Math.abs(Math.round(
+        ((sentence.length / 5) / (time/1000/60) - prev_result) / prev_result * 100)) + '% worse than the previous result', width/2, height/5 + 100) 
+    }
+
+    for (j=0; j<results.length;j++) {
+      if (j >= 5) {
+        break
+      }
+      else {
+        text(j+1 + '. ' + results[j] + " WPM", width/2, height/2 + j*50)
+      }
+    }
+
+    textSize(width/40)
+    text("click anywhere to play again", width/2, height * 9/10)
+
+    if (mouseIsPressed && mouseButton == LEFT) {
+      results.push(Math.round((sentence.length / 5) / (time/1000/60)))
+      prev_result = Math.round((sentence.length / 5) / (time/1000/60))
+      results.sort((a, b) => b-a)
+
       reset()
       generateWords()
     }
@@ -93,7 +130,7 @@ function draw() {
       else {
         text(typed[i], width/2 - textWidth(sentence.slice(0, sentence.length/2)) + (i*textWidth(sentence[0])), height/2)
       }
-      final = i + 1
+      final = i + 1 
     }
     fill(255)
     if (even_sentence) {
@@ -127,7 +164,9 @@ function keyTyped() {
   if (time == 0) {
     started = true
   }
-  typed += key
+  if (keyCode != ENTER) {
+    typed += key
+  }
 }
 
 function keyPressed() {
