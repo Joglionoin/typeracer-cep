@@ -1,4 +1,6 @@
 
+difficulty = "default"
+
 function preload() {
   words = loadStrings("words.txt")
 }
@@ -10,7 +12,6 @@ function setup() {
 
   results = []
   prev_result = 0
-
 }
 
 function windowResized() {
@@ -83,8 +84,9 @@ function draw() {
     }
 
     fill(255)
-    textSize(width / 25)
     textAlign(CENTER)
+
+    textSize(width / 25)
     text((time/1000).toFixed(2), width/2, height * 4/5)
 
     strokeWeight(0)
@@ -104,7 +106,6 @@ function draw() {
     else {
       restart_hover = 50
     }
-
     textSize(width / 75)
 
     // generated words
@@ -147,7 +148,8 @@ function generateWords() {
   textSize(width / 75)
   sentence = ''
   for (i=0; i<10; i++) {
-    sentence += words[Math.floor(Math.random() * words.length)]
+    word = words[Math.floor(Math.random() * words.length)]
+    sentence += word
     sentence += ' '
   }
   
