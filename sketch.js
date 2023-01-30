@@ -166,7 +166,7 @@ function keyTyped() {
   if (time == 0) {
     started = true
   }
-  if (keyCode != ENTER) {
+  if (keyCode != ENTER && keyCode != BACKSPACE) {
     typed += key
   }
 }
